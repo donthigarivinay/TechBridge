@@ -1,0 +1,313 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite does not support Enums, using Strings instead.
+// UserRole: STUDENT, CLIENT, ADMIN
+// ProjectStatus: PENDING, OPEN, IN_PROGRESS, COMPLETED, CANCELLED
+// ApplicationStatus: APPLIED, SHORTLISTED, REJECTED, ACCEPTED
+// TaskStatus: TODO, IN_PROGRESS, IN_REVIEW, DONE
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password      String
+  name          String
+  role          String         @default("STUDENT") // Should map to UserRole enum ideally, keeping String for now to avoid migration friction if enum not set up manually first, but using Enums is better. Let's use Enums where possible if SQLite supports them (Prisma handles this).
+  // Actually, for SQLite mixin, Enums are supported by Prisma.
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  studentProfile StudentProfile?
+  
+  // Client specific
+  projects      Project[]      @relation("ClientProjects")
+  projectRequests ProjectRequest[]
+
+  // Admin specific
+  adminProjects Project[]      @relation("AdminProjects")
+  
+  // Generalized
+  sentPayments     Payment[]   @relation("Sender")
+  receivedPayments Payment[]   @relation("Receiver")
+  notifications    Notification[]
+  comments         Comment[]
+  ratingsGiven     Rating[]    @relation("Rater")
+  ratingsReceived  Rating[]    @relation("RatedUser")
+
+  clientProfile    ClientProfile?
+  
+  // Messaging
+  participants     Participant[]
+  messages         Message[]
+}
+
+model ClientProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  
+  companyName  String?
+  website      String?
+  industry     String?
+  companySize  String?
+  description  String?
+  location     String?
+  
+  contactPhone String?
+  linkedin     String?
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model StudentProfile {
+  id           String        @id @default(cuid())
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id])
+  
+  headline     String?
+  bio          String?
+  portfolioUrl String?
+  resumeUrl    String?
+  
+  // Skills relation
+  skills       Skill[]
+  
+  applications Application[]
+  teamMembers  TeamMember[]
+  earnings     Float         @default(0.0)
+}
+
+model Skill {
+  id        String           @id @default(cuid())
+  name      String           @unique
+  category  String?          // e.g. "Frontend", "Backend"
+  students  StudentProfile[]
+}
+
+model ProjectRequest {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      User     @relation(fields: [clientId], references: [id])
+  title       String
+  description String
+  budget      Float?
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  title        String
+  description  String
+  requirements String?
+  budget       Float
+  status       String        @default("PENDING") // PENDING, OPEN, IN_PROGRESS, DELIVERED, COMPLETED
+  
+  clientId     String
+  client       User          @relation("ClientProjects", fields: [clientId], references: [id])
+  
+  adminId      String?
+  admin        User?         @relation("AdminProjects", fields: [adminId], references: [id])
+  
+  roles        ProjectRole[]
+  tasks        Task[]
+  teams        Team[]
+  comments     Comment[]
+  payments     Payment[]
+  ratings      Rating[]
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model ProjectRole {
+  id           String        @id @default(cuid())
+  projectId    String
+  project      Project       @relation(fields: [projectId], references: [id])
+  name         String        // e.g. "Frontend Dev"
+  description  String?
+  salarySplit  Float         // Percentage or fixed amount? Let's assume Percentage for now based on prompt "salary split"
+  
+  applications Application[]
+  teamMember   TeamMember?
+}
+
+model Application {
+  id           String            @id @default(cuid())
+  studentId    String
+  student      StudentProfile    @relation(fields: [studentId], references: [id])
+  roleId       String
+  role         ProjectRole       @relation(fields: [roleId], references: [id])
+  
+  status       String            @default("APPLIED")
+  notes        String?
+  
+  createdAt    DateTime          @default(now())
+}
+
+model Team {
+  id           String       @id @default(cuid())
+  projectId    String       @unique
+  project      Project      @relation(fields: [projectId], references: [id])
+  members      TeamMember[]
+  createdAt    DateTime     @default(now())
+}
+
+model TeamMember {
+  id           String         @id @default(cuid())
+  teamId       String
+  team         Team           @relation(fields: [teamId], references: [id])
+  studentId    String
+  student      StudentProfile @relation(fields: [studentId], references: [id])
+  roleId       String         @unique
+  role         ProjectRole    @relation(fields: [roleId], references: [id])
+  
+  joinedAt     DateTime       @default(now())
+}
+
+model Task {
+  id           String     @id @default(cuid())
+  projectId    String
+  project      Project    @relation(fields: [projectId], references: [id])
+  
+  title        String
+  description  String
+  status       String     @default("TODO") // TODO, IN_PROGRESS, REVIEW, DONE
+  priority     String     @default("MEDIUM")
+  
+  assignedTo   String?    // ID of StudentProfile or User? Let's use StudentProfile ID for consistency with TeamMember
+  deadline     DateTime?
+  
+  submissions  Submission[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Submission {
+  id           String   @id @default(cuid())
+  taskId       String
+  task         Task     @relation(fields: [taskId], references: [id])
+  
+  content      String   // Link or text
+  files        String?  // JSON string or comma separated
+  
+  status       String   @default("PENDING") // PENDING, APPROVED, NEEDS_FIX
+  adminReview  String?
+  
+  createdAt    DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  amount      Float
+  status      String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  referenceId String?  // Stripe/Razorpay ID
+  
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id])
+  
+  fromUserId  String?
+  fromUser    User?    @relation("Sender", fields: [fromUserId], references: [id])
+  
+  toUserId    String?
+  toUser      User?    @relation("Receiver", fields: [toUserId], references: [id])
+  
+  type        String   // PROJECT_BUDGET, SALARY_DISTRIBUTION
+  createdAt   DateTime @default(now())
+}
+
+model Rating {
+  id          String   @id @default(cuid())
+  score       Int      // 1-5
+  feedback    String?
+  
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+  
+  raterId     String
+  rater       User     @relation("Rater", fields: [raterId], references: [id])
+  
+  ratedUserId String
+  ratedUser   User     @relation("RatedUser", fields: [ratedUserId], references: [id])
+  
+  createdAt   DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  
+  type      String?  // APPLICATION_UPDATE, TASK_ASSIGNED, PAYMENT_RECEIVED
+  link      String?  // Deep link
+  
+  createdAt DateTime @default(now())
+}
+
+// Messaging System
+
+model Conversation {
+  id           String        @id @default(cuid())
+  participants Participant[]
+  messages     Message[]
+  
+  type         String        @default("DIRECT") // DIRECT, GROUP
+  status       String        @default("ACTIVE") // ACTIVE, ARCHIVED
+  
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Participant {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  
+  joinedAt       DateTime     @default(now())
+  lastReadAt     DateTime?
+  
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id])
+  
+  content        String
+  read           Boolean      @default(false)
+  
+  createdAt      DateTime     @default(now())
+}

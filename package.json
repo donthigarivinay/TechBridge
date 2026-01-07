@@ -1,0 +1,19 @@
+{
+    "name": "btech-freelancing-platform",
+    "version": "1.0.0",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "dev:backend": "npm run dev --workspace=@btech/backend",
+        "dev:frontend": "npm run dev --workspace=@btech/frontend",
+        "db:generate": "npm run generate --workspace=@btech/database",
+        "db:push": "npm run db:push --workspace=@btech/database",
+        "docker:up": "docker-compose up -d",
+        "docker:down": "docker-compose down",
+        "build": "npm run build --workspaces",
+        "test": "npm run test --workspaces"
+    }
+}
