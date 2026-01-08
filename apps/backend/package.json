@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "build": "npx nest build --webpack --webpackPath ./webpack.config.js && mkdir -p api && cp dist/main.js api/index.js",
+        "build": "npx nest build",
         "format": "prettier --write \"src/**/*.ts\"",
         "start": "npx nest start --exec \"node dist/apps/backend/src/main.js\"",
         "dev": "npx nest start --watch --exec \"node dist/apps/backend/src/main.js\"",
