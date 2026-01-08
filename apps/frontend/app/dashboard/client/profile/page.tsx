@@ -32,7 +32,7 @@ export default function ClientProfilePage() {
                 setProjects(projs);
 
                 const totalSpent = projs.reduce((acc: number, p: any) => acc + (p.status === 'COMPLETED' ? p.budget : 0), 0);
-                const active = projs.filter((p: any) => p.status === 'IN_PROGRESS' || p.status === 'PENDING_APPROVAL').length;
+                const active = projs.filter((p: any) => p.status === 'IN_PROGRESS' || p.status === 'PENDING').length;
 
                 setStats({
                     totalSpent,
@@ -75,7 +75,7 @@ export default function ClientProfilePage() {
         switch (status) {
             case 'COMPLETED': return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]';
             case 'IN_PROGRESS': return 'bg-blue-500/10 text-blue-500 border-blue-500/20 shadow-[0_0_15px_rgba(37,99,235,0.1)]';
-            case 'PENDING_APPROVAL': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.1)]';
+            case 'PENDING': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.1)]';
             default: return 'bg-zinc-800 text-zinc-500 border-zinc-700';
         }
     };

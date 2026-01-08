@@ -29,8 +29,8 @@ export default function ProjectApprovalsPage() {
     const fetchPendingProjects = async () => {
         try {
             setLoading(true);
-            const res = await api.get('/projects?status=PENDING_APPROVAL');
-            const pending = Array.isArray(res.data) ? res.data.filter((p: any) => p.status === 'PENDING_APPROVAL') : [];
+            const res = await api.get('/projects?status=PENDING');
+            const pending = Array.isArray(res.data) ? res.data.filter((p: any) => p.status === 'PENDING') : [];
             setProjects(pending);
         } catch (error) {
             console.error("Failed to fetch pending projects", error);

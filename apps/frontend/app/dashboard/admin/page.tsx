@@ -165,30 +165,38 @@ export default function AdminDashboard() {
                     <div className="grid gap-4">
                         {stats?.recentProjects?.length > 0 ? (
                             stats.recentProjects.map((proj: any) => (
-                                <div key={proj.id} className="p-6 rounded-[32px] bg-zinc-900/10 border border-zinc-900/50 hover:border-zinc-700 transition-all flex items-center justify-between group">
-                                    <div className="flex items-center gap-6">
-                                        <div className="h-14 w-14 rounded-2xl bg-zinc-950 border border-zinc-800 flex items-center justify-center text-zinc-500 group-hover:scale-110 transition-transform">
-                                            <Terminal className="w-6 h-6" />
+                                <Link key={proj.id} href={`/dashboard/admin/projects/${proj.id}`} className="block group">
+                                    <div className="p-6 rounded-[32px] bg-zinc-900/10 border border-zinc-900/50 hover:border-blue-500/30 hover:bg-zinc-900/20 transition-all flex items-center justify-between">
+                                        <div className="flex items-center gap-6">
+                                            <div className="h-14 w-14 rounded-2xl bg-zinc-950 border border-zinc-800 flex items-center justify-center text-zinc-500 group-hover:scale-110 group-hover:text-blue-500 transition-all">
+                                                <Terminal className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <h2 className="text-xl font-black italic uppercase tracking-tight text-white mb-1 group-hover:text-blue-400 transition-colors">
+                                                    {proj.title}
+                                                </h2>
+                                                <p className="text-xs font-black text-zinc-700 uppercase tracking-[0.2em] italic line-clamp-1">
+                                                    {proj.description || 'Awaiting admin review.'}
+                                                </p>
+                                                <div className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
+                                                    By {proj.client?.user?.name || proj.client?.name || 'Unauthorized Client'}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h2 className="text-xl font-black italic uppercase tracking-tight text-white mb-1">Project Requests</h2>
-                                            <p className="text-xs font-black text-zinc-700 uppercase tracking-[0.2em] italic">Awaiting admin review.</p>
-                                            <div className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">By {proj.client?.user?.name || 'Unauthorized Client'}</div>
+                                        <div className="flex items-center gap-8">
+                                            <div className="text-right hidden md:block">
+                                                <div className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Budget</div>
+                                                <div className="text-sm font-black italic text-emerald-500">${proj.budget}</div>
+                                            </div>
+                                            <div className={cn(
+                                                "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border",
+                                                proj.status === 'PENDING' ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                            )}>
+                                                {proj.status.replace('_', ' ')}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-8">
-                                        <div className="text-right hidden md:block">
-                                            <div className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Budget</div>
-                                            <div className="text-sm font-black italic text-emerald-500">${proj.budget}</div>
-                                        </div>
-                                        <div className={cn(
-                                            "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border",
-                                            proj.status === 'PENDING_APPROVAL' ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                                        )}>
-                                            {proj.status.replace('_', ' ')}
-                                        </div>
-                                    </div>
-                                </div>
+                                </Link>
                             ))
                         ) : (
                             <div className="p-12 border border-dashed border-zinc-800 rounded-[32px] text-center">

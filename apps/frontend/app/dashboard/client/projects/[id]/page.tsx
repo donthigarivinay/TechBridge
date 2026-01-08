@@ -18,7 +18,7 @@ function StatusBadge({ status }: { status: string }) {
     if (status === "OPEN") color = "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]";
     if (status === "IN_PROGRESS") color = "bg-blue-500/10 text-blue-400 border-blue-500/20 shadow-[0_0_15px_rgba(37,99,235,0.1)]";
     if (status === "COMPLETED") color = "bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.1)]";
-    if (status === "PENDING_APPROVAL") color = "bg-yellow-500/10 text-yellow-400 border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.1)]";
+    if (status === "PENDING") color = "bg-yellow-500/10 text-yellow-400 border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.1)]";
 
     return (
         <span className={cn(
@@ -306,7 +306,7 @@ export default function ManageProjectPage() {
                                 </div>
                             </div>
 
-                            {project.status === 'PENDING_APPROVAL' && (
+                            {project.status === 'PENDING' && (
                                 <div className="p-6 rounded-[24px] bg-yellow-500/5 border border-yellow-500/10">
                                     <div className="flex items-center gap-3 mb-2">
                                         <Activity className="w-4 h-4 text-yellow-500" />

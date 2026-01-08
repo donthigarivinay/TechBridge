@@ -15,7 +15,7 @@ function StatusBadge({ status }: { status: string }) {
     if (status === "OPEN") color = "bg-green-100 text-green-800";
     if (status === "IN_PROGRESS") color = "bg-blue-100 text-blue-800";
     if (status === "COMPLETED") color = "bg-purple-100 text-purple-800";
-    if (status === "PENDING_APPROVAL") color = "bg-yellow-100 text-yellow-800";
+    if (status === "PENDING") color = "bg-yellow-100 text-yellow-800";
 
     return (
         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${color}`}>

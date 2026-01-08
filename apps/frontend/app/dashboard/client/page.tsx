@@ -42,7 +42,7 @@ export default function ClientDashboard() {
     }, []);
 
     const activeProjectsList = projects.filter((p: any) => ['OPEN', 'IN_PROGRESS'].includes(p.status));
-    const pendingProjectsList = projects.filter((p: any) => p.status === 'PENDING_APPROVAL');
+    const pendingProjectsList = projects.filter((p: any) => p.status === 'PENDING');
 
     if (loading) {
         return <DashboardSkeleton />;

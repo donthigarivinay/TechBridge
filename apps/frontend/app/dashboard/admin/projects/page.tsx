@@ -91,7 +91,7 @@ export default function AdminProjectsPage() {
         p.client?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const pendingCount = projects.filter(p => p.status === 'PENDING_APPROVAL').length;
+    const pendingCount = projects.filter(p => p.status === 'PENDING').length;
 
     if (loading && projects.length === 0) {
         return (
@@ -205,7 +205,7 @@ export default function AdminProjectsPage() {
                                         </td>
                                         <td className="py-6 px-6">
                                             <div className="flex items-center gap-2">
-                                                {p.status === 'PENDING_APPROVAL' && (
+                                                {p.status === 'PENDING' && (
                                                     <Button
                                                         size="sm"
                                                         onClick={() => handleApprove(p.id)}
@@ -247,7 +247,7 @@ export default function AdminProjectsPage() {
 
 function StatusBadge({ status }: { status: string }) {
     const config: Record<string, { label: string, color: string }> = {
-        'PENDING_APPROVAL': { label: 'Pending Approval', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20' },
+        'PENDING': { label: 'Pending Approval', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20' },
         'OPEN': { label: 'Open', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
         'IN_PROGRESS': { label: 'In Progress', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' },
         'COMPLETED': { label: 'Completed', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },

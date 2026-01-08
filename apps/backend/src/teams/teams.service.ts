@@ -65,9 +65,11 @@ export class TeamsService {
             include: {
                 project: {
                     select: {
+                        id: true,
                         title: true,
                         budget: true,
                         status: true,
+                        clientId: true,
                         client: {
                             select: { name: true }
                         }
@@ -78,7 +80,7 @@ export class TeamsService {
                         student: {
                             include: {
                                 user: {
-                                    select: { name: true, email: true }
+                                    select: { id: true, name: true, email: true }
                                 }
                             }
                         },

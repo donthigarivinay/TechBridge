@@ -180,7 +180,7 @@ export default function AdminProjectDetails() {
                     <Button variant="outline" className="bg-zinc-900/50 border-zinc-800 h-12 px-6 rounded-2xl font-bold hover:bg-zinc-800 transition-all flex items-center gap-2">
                         <Settings className="w-5 h-5" /> Edit Scope
                     </Button>
-                    {project.status === 'PENDING_APPROVAL' && (
+                    {project.status === 'PENDING' && (
                         <Button onClick={handleApprove} className="px-8 h-12 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 transition-all hover:scale-105">
                             Approve & Open
                         </Button>
@@ -385,7 +385,7 @@ export default function AdminProjectDetails() {
 
 function StatusBadge({ status }: { status: string }) {
     const config: Record<string, { label: string, color: string }> = {
-        'PENDING_APPROVAL': { label: 'Awaiting Scope', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20' },
+        'PENDING': { label: 'Awaiting Scope', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20' },
         'OPEN': { label: 'Active Recruitment', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
         'IN_PROGRESS': { label: 'In Execution', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' },
         'COMPLETED': { label: 'Fulfilled', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },

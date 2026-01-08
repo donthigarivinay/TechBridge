@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 
 async function main() {
+    console.log('Connecting to:', process.env.DATABASE_URL);
     const hashedPassword = await bcrypt.hash('admin123', 10);
 
     const admin = await prisma.user.upsert({
