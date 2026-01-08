@@ -125,7 +125,7 @@ export default function OpportunitiesPage() {
                                 <CardFooter className="pb-8">
                                     <Button asChild className="w-full h-14 bg-white hover:bg-zinc-200 text-black border border-white rounded-2xl transition-all font-black text-[10px] uppercase tracking-widest shadow-2xl flex items-center gap-2 group/btn">
                                         <Link href={`/dashboard/student/opportunities/${project.id}`}>
-                                            View Details <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                            Analyze & Enroll <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                                         </Link>
                                     </Button>
                                 </CardFooter>

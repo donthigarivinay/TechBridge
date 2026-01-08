@@ -19,6 +19,7 @@ export default function OpportunityDetailsPage() {
     const [loading, setLoading] = useState(true);
     const [applying, setApplying] = useState<string | null>(null);
     const [activeProject, setActiveProject] = useState<any>(null);
+    const [appliedRoles, setAppliedRoles] = useState<string[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,6 +36,10 @@ export default function OpportunityDetailsPage() {
                     !['COMPLETED', 'CANCELLED'].includes(a.role?.project?.status)
                 );
                 setActiveProject(active);
+
+                // Track roles user has already applied for in THIS project
+                const localApps = appsRes.data.filter((a: any) => a.role?.projectId === params.id);
+                setAppliedRoles(localApps.map((a: any) => a.roleId));
             } catch (error) {
                 console.error("Failed to fetch data", error);
                 toast({
@@ -61,6 +66,7 @@ export default function OpportunityDetailsPage() {
                 title: "Protocol Initialized",
                 description: `Successfully enrolled in ${roleTitle}. Waiting for Admin authorization.`,
             });
+            setAppliedRoles(prev => [...prev, roleId]);
             // Refresh to show updated states if any, or just push.
         } catch (error: any) {
             console.error("Failed to apply", error);
@@ -124,15 +130,24 @@ export default function OpportunityDetailsPage() {
                         <span className="text-base font-black italic text-zinc-300">
                             {project.deadline ? new Date(project.deadline).toLocaleDateString() : 'TBD'}
                         </span>
+
+                        {!activeProject && (
+                            <Button
+                                onClick={() => document.getElementById('roles-section')?.scrollIntoView({ behavior: 'smooth' })}
+                                className="mt-4 h-14 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.2)] animate-pulse"
+                            >
+                                START ENROLLMENT <Rocket className="w-4 h-4 ml-2" />
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>
 
             <div className="grid gap-12 lg:grid-cols-7 items-start">
-                <div className="lg:col-span-4 space-y-8">
+                <div className="lg:col-span-4 space-y-8" id="roles-section">
                     <div className="px-2">
-                        <h2 className="text-2xl font-black italic uppercase tracking-tight text-white mb-2">Open Roles</h2>
-                        <p className="text-sm font-black text-zinc-700 uppercase tracking-[0.2em] italic">Apply for a specific role to contribute to this project.</p>
+                        <h2 className="text-2xl font-black italic uppercase tracking-tight text-white mb-2">Available Roles</h2>
+                        <p className="text-sm font-black text-zinc-700 uppercase tracking-[0.2em] italic">Enroll in a specific role to initiate synchronization.</p>
                     </div>
 
                     <div className="space-y-6">
@@ -185,20 +200,22 @@ export default function OpportunityDetailsPage() {
                                             ) : (
                                                 <Button
                                                     onClick={() => handleApply(role.id, role.name || role.title)}
-                                                    disabled={applying === role.id || !!activeProject}
+                                                    disabled={applying === role.id || !!activeProject || appliedRoles.includes(role.id)}
                                                     className={cn(
                                                         "w-full md:w-48 h-14 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all",
-                                                        activeProject
+                                                        (activeProject || appliedRoles.includes(role.id))
                                                             ? "bg-zinc-900 border border-zinc-800 text-zinc-500 cursor-not-allowed"
                                                             : "bg-white hover:bg-zinc-200 text-black shadow-2xl hover:scale-105 active:scale-95 group/enroll"
                                                     )}
                                                 >
                                                     {applying === role.id ? (
                                                         <Activity className="w-4 h-4 animate-spin" />
+                                                    ) : appliedRoles.includes(role.id) ? (
+                                                        <>PENDING <Clock className="w-4 h-4 ml-2" /></>
                                                     ) : activeProject ? (
                                                         <>LOCKED <Shield className="w-4 h-4 ml-2" /></>
                                                     ) : (
-                                                        <>APPLY NOW <Rocket className="w-4 h-4 ml-2 group-hover/enroll:translate-x-1 group-hover/enroll:-translate-y-1 transition-transform" /></>
+                                                        <>ENROLL NOW <Rocket className="w-4 h-4 ml-2 group-hover/enroll:translate-x-1 group-hover/enroll:-translate-y-1 transition-transform" /></>
                                                     )}
                                                 </Button>
                                             )}
