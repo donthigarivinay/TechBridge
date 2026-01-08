@@ -1,59 +1,66 @@
-📘 TechBridge
-TechBridge is a platform that bridges the gap between engineering students and real world software development experience. It connects fresh graduates and B.Tech students with real client projects, enabling them to earn while they learn, build verified portfolios, and gain practical experience that leads to job placements.
+# 📘 TechBridge
 
-💻 Live Demo: https://student-tech-bridge.vercel.app/
+**TechBridge** is a platform that bridges the gap between engineering students and real-world software development experience. It connects fresh graduates and B.Tech students with real client projects, enabling them to **earn while they learn**, build **verified portfolios**, and gain **practical experience** that leads to job placements.
 
-🌍 Repository: https://github.com/donthigarivinay/TechBridge
+💻 **Live Demo:** https://student-tech-bridge.vercel.app/  
+🌍 **Repository:** https://github.com/donthigarivinay/TechBridge
 
-🚀 Overview
+---
+
+## 🚀 Overview
 
 TechBridge provides:
 
-A platform for students to work on real projects
+- A platform for students to work on real-world projects  
+- A managed team process for high-quality software delivery  
+- Verified portfolios and mentorship  
+- A streamlined workflow for clients to get software built reliably  
 
-A managed team process for quality software delivery
+Whether you are a student looking for hands-on experience or a business seeking reliable development services, **TechBridge connects both sides through a structured and transparent process**.
 
-Verified portfolios and mentorship
+---
 
-A streamlined workflow for clients to get software built reliably
+## 🧠 How It Works
 
-Whether you are a student looking for experience or a business needing development help, TechBridge brings both sides together with a structured process.
+### 👨‍🎓 For Students
 
-🧠 How It Works
-For Students
+1. Sign up and create a developer profile  
+2. Browse and apply to real client projects  
+3. Join a verified team and contribute to development  
+4. Complete tasks, get reviewed, and earn experience & portfolio credits  
 
-Sign up and create a developer profile.
+### 🧑‍💼 For Clients
 
-Browse and apply to real client projects.
+1. Submit project requirements  
+2. Admin reviews and approves scope & budget  
+3. A verified student team is assigned  
+4. Clients receive fully tested software with quality assurance  
 
-Join a verified team and contribute to work.
+---
 
-Complete work, get reviewed, and earn experience and portfolio credits.
+## 🛠 Features
 
-For Clients
+✔ Managed team workflow  
+✔ Transparent project tracking  
+✔ Secure payments and escrow delivery  
+✔ Verified portfolios for students  
+✔ Real client engagements  
+✔ Multiple roles supported:
+- Frontend  
+- Backend  
+- Mobile  
+- QA  
+- DevOps  
 
-Submit project requirements.
+---
 
-Admin reviews and approves scope & budget.
-
-A verified student team is assigned.
-
-Clients receive fully tested software with quality assurance.
-
-🛠 Features
-
-✔ Managed team workflow
-✔ Transparent project tracking
-✔ Secure payments and escrow delivery
-✔ Verified portfolios for students
-✔ Real client engagements
-✔ Multiple roles: Frontend, Backend, Mobile, QA, DevOps, etc
-
-📁 Project Structure
-
-The repository contains:
+## 📁 Project Structure
 
 📦 apps
+┣ 📂 frontend
+┃ ┗ 📄 (Frontend application code)
+┣ 📂 backend
+┃ ┗ 📄 (Backend APIs & server logic)
 📦 packages
 📄 docker-compose.yml
 📄 package.json
@@ -61,50 +68,51 @@ The repository contains:
 📄 .gitignore
 
 
-apps/ — Client and server application code
+### Folder Details
 
-packages/ — Shared libraries
+- `apps/frontend/` — Frontend application (UI, pages, components)
+- `apps/backend/` — Backend services, APIs, authentication, database logic
+- `packages/` — Shared libraries and utilities
+- `docker-compose.yml` — Development environment setup
+- `package.json` — Dependencies and scripts
 
-docker-compose.yml — Dev environment setup
+---
 
-package.json — Dependencies & scripts
+## 🧪 Local Setup
 
-🛠 You can expand this section if you want detailed descriptions of each folder/file.
+### 🚀 Install and Run Locally
 
-🧪 Local Setup
-
-🚀 Install and run the project locally
-
-Clone the repository
-
+#### 1️⃣ Clone the Repository
+```bash
 git clone https://github.com/donthigarivinay/TechBridge.git
 cd TechBridge
-
-
-Install dependencies
-
+2️⃣ Install Dependencies
 npm install
-
-
-Start the development server
-
+3️⃣ Start the Development Server
 npm run dev
 
+⚠️ You may need to configure environment variables (API keys, database URLs, etc.).
+Create a .env file and add the required values.
 
-You may need proper environment variables (such as API keys, database URLs, etc.) — set these in a .env file.
+## 🚀 Deployment
 
-Deployment
+This project can be deployed on **Vercel**, as demonstrated in the live demo.
 
-This project can be deployed on platforms like Vercel (as shown in your live demo). You can connect your GitHub repo directly and deploy via Vercel with zero config for frontend, and set up the backend/services accordingly.
+- Connect the GitHub repository to Vercel  
+- Frontend deploys with zero configuration  
+- Backend and services can be configured via environment variables  
 
-🧑‍🤝‍🧑 Contributing
+🌐 **Live Demo:** https://student-tech-bridge.vercel.app/
 
-Contributions are welcome! You can:
+---
 
-Propose features
+## 🧑‍🤝‍🧑 Contributing
 
-Fix bugs
+Contributions are welcome!
 
-Improve documentation
+You can:
+- Propose new features  
+- Fix bugs  
+- Improve documentation  
 
-Please open an issue or PR in this repository.
+Please open an **Issue** or submit a **Pull Request**.
