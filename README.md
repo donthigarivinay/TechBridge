@@ -55,7 +55,7 @@ Whether you are a student looking for hands-on experience or a business seeking 
 ---
 
 ## 📁 Project Structure
-
+```text
 📦 apps
 ┣ 📂 frontend
 ┃ ┗ 📄 (Frontend application code)
@@ -94,7 +94,7 @@ npm run dev
 ⚠️ You may need to configure environment variables (API keys, database URLs, etc.).
 Create a .env file and add the required values.
 
-## 🚀 Deployment
+### 🚀 Deployment
 
 This project can be deployed on **Vercel**, as demonstrated in the live demo.
 
@@ -106,7 +106,7 @@ This project can be deployed on **Vercel**, as demonstrated in the live demo.
 
 ---
 
-## 🧑‍🤝‍🧑 Contributing
+### 🧑‍🤝‍🧑 Contributing
 
 Contributions are welcome!
 
