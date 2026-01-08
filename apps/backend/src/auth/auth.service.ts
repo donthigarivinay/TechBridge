@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, ConflictException, InternalServerErr
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +38,8 @@ export class AuthService {
         try {
             const hashedPassword = await bcrypt.hash(data.password, 10);
 
-            const user = await this.prisma.$transaction(async (prisma) => {
+            // ... inside register method
+            const user = await this.prisma.$transaction(async (prisma: Prisma.TransactionClient) => {
                 // Check if user already exists
                 const existing = await prisma.user.findUnique({ where: { email: data.email } });
                 if (existing) {
