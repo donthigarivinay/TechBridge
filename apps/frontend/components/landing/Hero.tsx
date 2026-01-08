@@ -1,8 +1,12 @@
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/ui/button';
+
 export function Hero() {
+    const { user, logout } = useAuth();
+
     return (
         <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 text-center overflow-hidden">
-            {/* Background elements */}
             {/* Background elements */}
             <div className="absolute top-0 left-0 w-full h-full -z-10 pointer-events-none overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-cyan-400/30 rounded-full blur-[100px] animate-blob" />
@@ -30,13 +34,31 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto opacity-0 animate-fade-in-up delay-300">
-                <Link href="/auth/register?role=STUDENT" className="group relative w-full sm:w-auto px-8 py-4 bg-white text-black font-bold rounded-xl transition-all transform hover:scale-105 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-violet-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <span className="relative z-10 group-hover:text-white transition-colors">Join as Student</span>
-                </Link>
-                <Link href="/auth/register?role=CLIENT" className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl transition-all hover:border-white/20 backdrop-blur-sm">
-                    Submit a Project
-                </Link>
+                {user ? (
+                    <>
+                        <Link href={
+                            user.role === 'STUDENT' ? '/dashboard/student' :
+                                user.role === 'CLIENT' ? '/dashboard/client' :
+                                    '/dashboard/admin'
+                        } className="group relative w-full sm:w-auto px-8 py-4 bg-white text-black font-bold rounded-xl transition-all transform hover:scale-105 overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-violet-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            <span className="relative z-10 group-hover:text-white transition-colors">Go to Dashboard</span>
+                        </Link>
+                        <button onClick={logout} className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl transition-all hover:border-white/20 backdrop-blur-sm">
+                            Sign Out
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <Link href="/auth/register?role=STUDENT" className="group relative w-full sm:w-auto px-8 py-4 bg-white text-black font-bold rounded-xl transition-all transform hover:scale-105 overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-violet-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            <span className="relative z-10 group-hover:text-white transition-colors">Join as Student</span>
+                        </Link>
+                        <Link href="/auth/register?role=CLIENT" className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl transition-all hover:border-white/20 backdrop-blur-sm">
+                            Submit a Project
+                        </Link>
+                    </>
+                )}
             </div>
 
             <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 text-zinc-500 text-sm font-medium opacity-60">

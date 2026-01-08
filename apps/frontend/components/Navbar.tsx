@@ -37,13 +37,18 @@ export function Navbar() {
                                     user.role === 'CLIENT' ? '/dashboard/client' :
                                         '/dashboard/admin'
                             }>
-                                <Button variant="ghost" className="text-zinc-300 hover:text-white">
+                                <Button className="bg-gradient-to-r from-cyan-400 to-violet-500 text-white border-0 hover:shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all font-bold rounded-full">
                                     Dashboard
                                 </Button>
                             </Link>
-                            <Button onClick={logout} variant="outline" className="border-zinc-700 hover:bg-zinc-800 text-zinc-300">
-                                Sign Out
-                            </Button>
+                            <div className="flex items-center gap-3 pl-4 border-l border-white/10">
+                                <div className="w-8 h-8 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-[10px] font-bold text-cyan-400">
+                                    {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user.email[0].toUpperCase()}
+                                </div>
+                                <Button onClick={logout} variant="ghost" className="text-zinc-400 hover:text-white text-xs p-0 h-auto">
+                                    Sign Out
+                                </Button>
+                            </div>
                         </>
                     ) : (
                         <>
