@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "build": "npx nest build",
+        "build": "npx nest build --webpack --webpackPath ./webpack.config.js && mkdir -p ../../api && cp dist/main.js ../../api/index.js",
         "format": "prettier --write \"src/**/*.ts\"",
         "start": "npx nest start --exec \"node dist/apps/backend/src/main.js\"",
         "dev": "npx nest start --watch --exec \"node dist/apps/backend/src/main.js\"",
@@ -36,6 +36,7 @@
         "@nestjs/schematics": "^10.0.0",
         "@types/express": "^4.17.17",
         "@types/node": "^20.3.1",
-        "typescript": "^5.1.3"
+        "typescript": "^5.1.3",
+        "webpack-node-externals": "^3.0.0"
     }
 }
