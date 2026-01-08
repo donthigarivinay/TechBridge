@@ -2,11 +2,11 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
-    // Enable CORS
     // Enable CORS
     app.enableCors({
         origin: (origin, callback) => {
@@ -16,6 +16,8 @@ async function bootstrap() {
         credentials: true,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     });
+
+    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
     app.setGlobalPrefix('api');
 

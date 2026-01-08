@@ -19,7 +19,7 @@ async function main() {
                     headline: 'Platform Super Admin',
                     bio: 'Responsible for maintaining system integrity and user management.',
                     department: 'Engineering',
-                    contactPhone: '+1-555-0199'
+                    contactPhone: '+91-9856895456'
                 }
             }
         },

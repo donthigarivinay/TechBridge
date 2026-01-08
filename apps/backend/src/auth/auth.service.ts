@@ -68,7 +68,9 @@ export class AuthService {
 
             return this.login(user);
         } catch (error: any) {
-            console.error('Registration failed:', error.message);
+            console.error('Registration failed:', error);
+            if (error.stack) console.error(error.stack);
+
             if (error instanceof ConflictException) throw error;
             throw new InternalServerErrorException('Registration failed. Please try again.');
         }
