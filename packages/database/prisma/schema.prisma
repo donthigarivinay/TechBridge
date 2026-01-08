@@ -7,19 +7,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// SQLite does not support Enums, using Strings instead.
-// UserRole: STUDENT, CLIENT, ADMIN
-// ProjectStatus: PENDING, OPEN, IN_PROGRESS, COMPLETED, CANCELLED
-// ApplicationStatus: APPLIED, SHORTLISTED, REJECTED, ACCEPTED
-// TaskStatus: TODO, IN_PROGRESS, IN_REVIEW, DONE
+enum UserRole {
+  STUDENT
+  CLIENT
+  ADMIN
+}
+
+enum ProjectStatus {
+  PENDING
+  OPEN
+  IN_PROGRESS
+  DELIVERED
+  COMPLETED
+  CANCELLED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  SHORTLISTED
+  REJECTED
+  ACCEPTED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
 
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
   password      String
   name          String
-  role          String         @default("STUDENT") // Should map to UserRole enum ideally, keeping String for now to avoid migration friction if enum not set up manually first, but using Enums is better. Let's use Enums where possible if SQLite supports them (Prisma handles this).
-  // Actually, for SQLite mixin, Enums are supported by Prisma.
+  role          UserRole       @default(STUDENT)
   
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
@@ -128,7 +156,7 @@ model Project {
   description  String
   requirements String?
   budget       Float
-  status       String        @default("PENDING") // PENDING, OPEN, IN_PROGRESS, DELIVERED, COMPLETED
+  status       ProjectStatus @default(PENDING)
   
   clientId     String
   client       User          @relation("ClientProjects", fields: [clientId], references: [id])
@@ -170,7 +198,7 @@ model Application {
   roleId       String
   role         ProjectRole       @relation(fields: [roleId], references: [id])
   
-  status       String            @default("APPLIED")
+  status       ApplicationStatus @default(APPLIED)
   notes        String?
   
   createdAt    DateTime          @default(now())
@@ -203,7 +231,7 @@ model Task {
   
   title        String
   description  String
-  status       String     @default("TODO") // TODO, IN_PROGRESS, REVIEW, DONE
+  status       TaskStatus     @default(TODO)
   priority     String     @default("MEDIUM")
   
   assignedTo   String?    // ID of StudentProfile or User? Let's use StudentProfile ID for consistency with TeamMember
@@ -244,7 +272,7 @@ model Comment {
 model Payment {
   id          String   @id @default(cuid())
   amount      Float
-  status      String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  status      PaymentStatus @default(PENDING)
   referenceId String?  // Stripe/Razorpay ID
   
   projectId   String?
