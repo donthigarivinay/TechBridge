@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle, Users, Activity, Trash2, DollarSign, Briefcase } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Users, Activity, Trash2, DollarSign, Briefcase, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
