@@ -4,10 +4,10 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "generate": "npx prisma generate",
-    "db:push": "npx prisma db push",
-    "db:migrate": "npx prisma migrate dev",
-    "db:seed": "npx prisma db seed"
+    "generate": "npx -p prisma@5.22.0 prisma generate",
+    "db:push": "npx -p prisma@5.22.0 prisma db push",
+    "db:migrate": "npx -p prisma@5.22.0 prisma migrate dev",
+    "db:seed": "npx -p prisma@5.22.0 prisma db seed"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
