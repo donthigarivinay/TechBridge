@@ -28,7 +28,17 @@ async function bootstrap() {
         .addBearerAuth()
         .build();
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, document);
+    SwaggerModule.setup('api/docs', app, document);
+
+    // Root route for health check
+    const server = app.getHttpAdapter();
+    server.get('/', (req, res) => {
+        res.json({
+            status: 'TechBridge Backend is running',
+            docs: '/api/docs',
+            timestamp: new Date().toISOString()
+        });
+    });
 
     const port = process.env.PORT || 3001;
     await app.listen(port);
