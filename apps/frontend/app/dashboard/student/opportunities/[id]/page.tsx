@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
 import { useParams, useRouter } from 'next/navigation';
-import { BadgeCheck, DollarSign, Calendar, ArrowLeft, Shield, Target, Zap, Rocket, Activity, CheckCircle, Star, Users } from 'lucide-react';
+import { BadgeCheck, DollarSign, Calendar, ArrowLeft, Shield, Target, Zap, Rocket, Activity, CheckCircle, Star, Users, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
