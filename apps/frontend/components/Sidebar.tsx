@@ -113,7 +113,7 @@ export function Sidebar() {
             </nav>
 
             <div className="p-8 border-t border-zinc-900 bg-zinc-950/20 relative z-10">
-                {role === 'STUDENT' && (
+                {/* {role === 'STUDENT' && (
                     <div className="mb-8 p-6 rounded-[32px] bg-zinc-900/30 border border-zinc-900 group overflow-hidden relative">
                         <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-10 transition-opacity">
                             <Zap className="w-16 h-16 text-white" />
@@ -130,7 +130,7 @@ export function Sidebar() {
                             <div className="bg-blue-600 h-full w-[84%] shadow-[0_0_10px_rgba(37,99,235,0.8)]" />
                         </div>
                     </div>
-                )}
+                )} */}
 
                 <div className="flex items-center gap-4 px-4 py-2 mb-4">
                     <div className="h-10 w-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center font-black italic text-zinc-600 uppercase text-xs">
