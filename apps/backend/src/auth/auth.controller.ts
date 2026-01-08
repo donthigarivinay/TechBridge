@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Get, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -17,11 +17,19 @@ export class AuthController {
     @Post('login')
     @ApiOperation({ summary: 'User login' })
     async login(@Body() loginDto: any) {
-        const user = await this.authService.validateUser(loginDto.email, loginDto.password);
-        if (!user) {
-            throw new Error('Invalid credentials');
+        try {
+            console.log('Login attempt for:', loginDto.email);
+            const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+            if (!user) {
+                console.log('Invalid credentials for:', loginDto.email);
+                throw new UnauthorizedException('Invalid credentials');
+            }
+            console.log('Login successful for:', loginDto.email);
+            return this.authService.login(user);
+        } catch (error) {
+            console.error('Login error:', error);
+            throw error;
         }
-        return this.authService.login(user);
     }
 
     @UseGuards(JwtAuthGuard)

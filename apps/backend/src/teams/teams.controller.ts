@@ -32,4 +32,11 @@ export class TeamsController {
     async getTeam(@Param('projectId') projectId: string) {
         return this.teamsService.getTeamByProject(projectId);
     }
+
+    @Get()
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Get all teams (Admin)' })
+    async findAll() {
+        return this.teamsService.findAll();
+    }
 }

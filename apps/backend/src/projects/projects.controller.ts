@@ -29,8 +29,15 @@ export class ProjectsController {
     @Patch(':id/approve')
     @Roles(UserRole.ADMIN)
     @ApiOperation({ summary: 'Approve a project (Admin) - Makes it visible to students' })
-    async approveProject(@Param('id') id: string) {
-        return this.projectsService.approveProject(id);
+    async approveProject(@Request() req: any, @Param('id') id: string) {
+        return this.projectsService.approveProject(id, req.user.userId);
+    }
+
+    @Patch(':id/reject')
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Reject a project (Admin)' })
+    async rejectProject(@Request() req: any, @Param('id') id: string) {
+        return this.projectsService.rejectProject(id, req.user.userId);
     }
 
     @Get('opportunities')
@@ -38,6 +45,13 @@ export class ProjectsController {
     @ApiOperation({ summary: 'Get open project opportunities' })
     async getOpportunities() {
         return this.projectsService.getOpportunities();
+    }
+
+    @Get('my-projects')
+    @Roles(UserRole.STUDENT)
+    @ApiOperation({ summary: 'Get projects student is part of' })
+    async getMyProjects(@Request() req: any) {
+        return this.projectsService.getStudentProjects(req.user.userId);
     }
 
     @Get()
@@ -125,5 +139,25 @@ export class ProjectsController {
     @ApiOperation({ summary: 'Remove member from team' })
     async removeTeamMember(@Param('id') id: string, @Body() data: { studentId: string }) {
         return this.teamsService.removeMemberByProject(id, data.studentId);
+    }
+    @Post('admin/:id/roles')
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Add role to project' })
+    async addRole(@Param('id') id: string, @Body() data: any) {
+        return this.projectsService.addRoleToProject(id, data);
+    }
+
+    @Patch('admin/:id/roles/:roleId')
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Update project role' })
+    async updateRole(@Param('roleId') roleId: string, @Body() data: any) {
+        return this.projectsService.updateProjectRole(roleId, data);
+    }
+
+    @Delete('admin/:id/roles/:roleId')
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Delete project role' })
+    async deleteRole(@Param('roleId') roleId: string) {
+        return this.projectsService.deleteProjectRole(roleId);
     }
 }

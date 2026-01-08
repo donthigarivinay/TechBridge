@@ -17,8 +17,7 @@ export class ClientsController {
     @Roles(UserRole.CLIENT)
     @ApiOperation({ summary: 'Get client profile' })
     async getProfile(@Request() req: any) {
-        // Now returns user with clientProfile included
-        return this.usersService.getUserProfile(req.user.userId);
+        return this.usersService.getClientProfile(req.user.userId);
     }
 
     @Put('profile')

@@ -93,26 +93,32 @@ export class MessagesService {
     }
 
     async startConversation(userId: string, targetUserId: string) {
+        // Check roles for security
+        const [sender, receiver] = await Promise.all([
+            this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
+            this.prisma.user.findUnique({ where: { id: targetUserId }, select: { role: true } })
+        ]);
+
+        if (!sender || !receiver) throw new Error('User not found');
+
+        // Enforcement: Only Admin can talk to anyone.
+        // Others can only talk to Admin.
+        if (sender.role !== 'ADMIN' && receiver.role !== 'ADMIN') {
+            throw new Error('Communication protocol violation: Non-admin users can only initiate contact with administrators.');
+        }
+
         // Check if direct conversation already exists
         const existing = await this.prisma.conversation.findFirst({
             where: {
                 type: 'DIRECT',
-                participants: {
-                    every: {
-                        userId: { in: [userId, targetUserId] },
-                    },
-                },
-            },
+                AND: [
+                    { participants: { some: { userId: userId } } },
+                    { participants: { some: { userId: targetUserId } } }
+                ]
+            }
         });
 
-        if (existing) {
-            // Check if BOTH participants are in it (edge case where 'every' might need careful check with count)
-            // A safer check:
-            const p1 = await this.prisma.participant.findFirst({ where: { conversationId: existing.id, userId } });
-            const p2 = await this.prisma.participant.findFirst({ where: { conversationId: existing.id, userId: targetUserId } });
-
-            if (p1 && p2) return existing;
-        }
+        if (existing) return existing;
 
         return this.prisma.conversation.create({
             data: {

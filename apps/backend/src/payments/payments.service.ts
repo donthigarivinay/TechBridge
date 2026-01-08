@@ -53,7 +53,8 @@ export class PaymentsService {
 
         for (const role of project.roles) {
             if (role.teamMember && role.teamMember.student) {
-                const salary = project.budget * (role.salarySplit / 100);
+                // Ensure salarySplit is treated as a percentage
+                const salary = Math.round((project.budget * (role.salarySplit / 100)) * 100) / 100;
 
                 // Create Payment record for student
                 const payment = await this.prisma.payment.create({
@@ -62,19 +63,45 @@ export class PaymentsService {
                         projectId: projectId,
                         toUserId: role.teamMember.student.userId,
                         type: 'SALARY_DISTRIBUTION',
-                        status: 'PENDING', // Pending until admin confirmation or batch process
+                        status: 'PENDING',
                     }
                 });
 
                 distributions.push({
-                    studentName: role.teamMember.student.user?.name || 'Unknown', // access user relation if included?
+                    id: payment.id,
+                    studentName: role.teamMember.student.user?.name || 'Unknown',
+                    studentEmail: role.teamMember.student.user?.email,
                     amount: salary,
-                    role: role.name,
-                    paymentId: payment.id
+                    roleName: role.name,
+                    status: payment.status
                 });
             }
         }
 
         return distributions;
+    }
+
+    async confirmPayment(paymentId: string, referenceId: string) {
+        return this.prisma.payment.update({
+            where: { id: paymentId },
+            data: {
+                status: 'COMPLETED',
+                referenceId: referenceId
+            }
+        });
+    }
+
+    async getProjectDistributions(projectId: string) {
+        return this.prisma.payment.findMany({
+            where: {
+                projectId,
+                type: 'SALARY_DISTRIBUTION'
+            },
+            include: {
+                toUser: {
+                    select: { name: true, email: true }
+                }
+            }
+        });
     }
 }

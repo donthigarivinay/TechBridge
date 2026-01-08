@@ -29,11 +29,15 @@ export default function RegisterPage() {
             // Based on backend implementation, register returns user/token.
             if (res.data.access_token) {
                 login(res.data.access_token);
+                // Redirect to settings based on role
+                const targetRole = role.toLowerCase();
+                router.push(`/dashboard/${targetRole}/settings`);
             } else {
                 // If backend requires verification or just returns user, prompt login
-                // Assuming efficient flow here, we can just call login
                 const loginRes = await api.post('/auth/login', { email, password });
                 login(loginRes.data.access_token);
+                const targetRole = role.toLowerCase();
+                router.push(`/dashboard/${targetRole}/settings`);
             }
         } catch (err: any) {
             setError(err.response?.data?.message || 'Registration failed');

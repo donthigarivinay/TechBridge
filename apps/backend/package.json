@@ -24,6 +24,7 @@
         "@types/bcryptjs": "^3.0.0",
         "@types/passport-jwt": "^4.0.1",
         "bcryptjs": "^3.0.3",
+        "octokit": "^5.0.5",
         "passport-jwt": "^4.0.1",
         "prisma": "^5.0.0",
         "reflect-metadata": "^0.1.13",

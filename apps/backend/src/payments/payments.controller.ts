@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseGuards, Req, Patch, Get } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -25,5 +25,19 @@ export class PaymentsController {
     @ApiOperation({ summary: 'Admin triggers salary distribution (Admin only)' })
     async distribute(@Param('projectId') projectId: string) {
         return this.paymentsService.distributeSalaries(projectId);
+    }
+
+    @Patch(':id/confirm')
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Confirm UPI payment success' })
+    async confirm(@Param('id') id: string, @Body('referenceId') referenceId: string) {
+        return this.paymentsService.confirmPayment(id, referenceId);
+    }
+
+    @Get('project/:projectId/distributions')
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Get all distributions for a project' })
+    async getDistributions(@Param('projectId') projectId: string) {
+        return this.paymentsService.getProjectDistributions(projectId);
     }
 }

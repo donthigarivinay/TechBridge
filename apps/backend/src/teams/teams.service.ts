@@ -59,4 +59,33 @@ export class TeamsService {
             where: { id: member.id }
         });
     }
+
+    async findAll() {
+        return this.prisma.team.findMany({
+            include: {
+                project: {
+                    select: {
+                        title: true,
+                        budget: true,
+                        status: true,
+                        client: {
+                            select: { name: true }
+                        }
+                    }
+                },
+                members: {
+                    include: {
+                        student: {
+                            include: {
+                                user: {
+                                    select: { name: true, email: true }
+                                }
+                            }
+                        },
+                        role: true
+                    }
+                }
+            }
+        });
+    }
 }

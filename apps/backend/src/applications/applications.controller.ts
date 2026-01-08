@@ -20,11 +20,25 @@ export class ApplicationsController {
         return this.applicationsService.applyToRole(req.user.userId, roleId, notes);
     }
 
+    @Get('me')
+    @Roles(UserRole.STUDENT)
+    @ApiOperation({ summary: 'Get current user applications' })
+    async getMyApps(@Request() req: any) {
+        return this.applicationsService.getMyApplications(req.user.userId);
+    }
+
     @Get('project/:projectId')
     @Roles(UserRole.ADMIN)
     @ApiOperation({ summary: 'Get all applications for a project (Admin only)' })
     async getProjectApps(@Param('projectId') projectId: string) {
         return this.applicationsService.getProjectApplications(projectId);
+    }
+
+    @Get()
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Get all applications (Admin only)' })
+    async getAllApps() {
+        return this.applicationsService.getAllApplications();
     }
 
     @Patch(':id/status')

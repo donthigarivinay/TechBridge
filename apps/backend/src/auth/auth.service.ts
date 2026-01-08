@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
@@ -33,15 +33,17 @@ export class AuthService {
     }
 
     async register(data: any) {
-        console.log('Register called with:', data.email);
+        console.log('Register called for:', data.email, 'as', data.role);
         try {
-            console.log('Hashing password...');
             const hashedPassword = await bcrypt.hash(data.password, 10);
-            console.log('Password hashed. Starting transaction...');
 
-            // Transaction to create user and profile if student
             const user = await this.prisma.$transaction(async (prisma) => {
-                console.log('Creating user in DB...');
+                // Check if user already exists
+                const existing = await prisma.user.findUnique({ where: { email: data.email } });
+                if (existing) {
+                    throw new ConflictException('User with this email already exists');
+                }
+
                 const newUser = await prisma.user.create({
                     data: {
                         name: data.name,
@@ -50,24 +52,23 @@ export class AuthService {
                         role: data.role || 'STUDENT',
                     },
                 });
-                console.log('User created:', newUser.id);
 
                 if (newUser.role === 'STUDENT') {
-                    console.log('Creating student profile...');
-                    await prisma.studentProfile.create({
-                        data: {
-                            userId: newUser.id,
-                        },
-                    });
+                    await prisma.studentProfile.create({ data: { userId: newUser.id } });
+                } else if (newUser.role === 'CLIENT') {
+                    await prisma.clientProfile.create({ data: { userId: newUser.id } });
+                } else if (newUser.role === 'ADMIN') {
+                    await prisma.adminProfile.create({ data: { userId: newUser.id } });
                 }
+
                 return newUser;
             });
-            console.log('Transaction complete.');
 
             return this.login(user);
-        } catch (error) {
-            console.error('Error registering user:', (error as any).message, (error as any).stack);
-            throw error;
+        } catch (error: any) {
+            console.error('Registration failed:', error.message);
+            if (error instanceof ConflictException) throw error;
+            throw new InternalServerErrorException('Registration failed. Please try again.');
         }
     }
 

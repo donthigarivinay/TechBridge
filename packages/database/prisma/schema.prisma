@@ -42,6 +42,7 @@ model User {
   ratingsReceived  Rating[]    @relation("RatedUser")
 
   clientProfile    ClientProfile?
+  adminProfile     AdminProfile?
   
   // Messaging
   participants     Participant[]
@@ -65,6 +66,21 @@ model ClientProfile {
   
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+}
+
+model AdminProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  
+  headline     String?
+  bio          String?
+  department   String?
+  contactPhone String?
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model StudentProfile {
@@ -76,6 +92,7 @@ model StudentProfile {
   bio          String?
   portfolioUrl String?
   resumeUrl    String?
+  githubUsername String?
   
   // Skills relation
   skills       Skill[]
@@ -83,6 +100,7 @@ model StudentProfile {
   applications Application[]
   teamMembers  TeamMember[]
   earnings     Float         @default(0.0)
+  status       String        @default("PENDING") // PENDING, APPROVED, REJECTED
 }
 
 model Skill {
@@ -124,6 +142,10 @@ model Project {
   comments     Comment[]
   payments     Payment[]
   ratings      Rating[]
+  
+  githubRepoUrl  String?
+  githubRepoName String?
+  deadline       DateTime?
   
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt

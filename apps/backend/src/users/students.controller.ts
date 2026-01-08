@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Put, Post, Patch, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -42,10 +42,24 @@ export class StudentsController {
         return this.usersService.updateStudentSkills(req.user.userId, data.skills);
     }
 
-    @Get('dashboard')
+    @Get('dashboard/stats')
     @Roles(UserRole.STUDENT)
     @ApiOperation({ summary: 'Get student dashboard stats' })
     async getDashboard(@Request() req: any) {
         return this.usersService.getStudentDashboard(req.user.userId);
+    }
+
+    @Get('admin/pending')
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Get pending students (Admin)' })
+    async getPendingStudents() {
+        return this.usersService.getAllStudents('PENDING');
+    }
+
+    @Patch(':id/status')
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Update student verification status (Admin)' })
+    async updateStatus(@Param('id') id: string, @Body('status') status: string) {
+        return this.usersService.updateStudentStatus(id, status);
     }
 }

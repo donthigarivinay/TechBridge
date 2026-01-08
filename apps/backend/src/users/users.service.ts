@@ -86,10 +86,10 @@ export class UsersService {
         };
     }
 
-    async getUserProfile(userId: string) {
+    async getClientProfile(userId: string) {
         return this.prisma.user.findUnique({
             where: { id: userId },
-            include: { clientProfile: true }, // Include client profile
+            include: { clientProfile: true },
         });
     }
 
@@ -135,33 +135,74 @@ export class UsersService {
         });
     }
 
-    async getAllStudents() {
+    async getAllStudents(status?: string) {
         return this.prisma.studentProfile.findMany({
-            include: { user: { select: { name: true, email: true } }, skills: true },
+            where: (status ? { status } : {}) as any,
+            include: { user: { select: { id: true, name: true, email: true } }, skills: true },
+        });
+    }
+
+    async updateStudentStatus(id: string, status: string) {
+        return this.prisma.studentProfile.update({
+            where: { id },
+            data: { status } as any,
         });
     }
 
     async getAdminDashboardStats() {
-        const totalRevenue = await this.prisma.payment.aggregate({
-            where: { status: 'COMPLETED' },
-            _sum: { amount: true },
-        });
-
-        const pendingProjects = await this.prisma.project.count({
-            where: { status: 'PENDING_APPROVAL' },
-        });
-
-        const activeUsers = await this.prisma.user.count(); // Assuming all users are active for now or filtering is not needed yet
-
-        const activeProjects = await this.prisma.project.count({
-            where: { status: 'IN_PROGRESS' },
-        });
+        const [
+            totalRevenue,
+            pendingProjectsCount,
+            totalStudents,
+            totalClients,
+            activeProjectsCount,
+            recentProjects,
+            recentApplications
+        ] = await Promise.all([
+            this.prisma.payment.aggregate({
+                where: { status: 'COMPLETED' },
+                _sum: { amount: true },
+            }),
+            this.prisma.project.count({
+                where: { status: 'PENDING_APPROVAL' },
+            }),
+            this.prisma.studentProfile.count(),
+            this.prisma.clientProfile.count(),
+            this.prisma.project.count({
+                where: { status: 'IN_PROGRESS' },
+            }),
+            this.prisma.project.findMany({
+                take: 5,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    client: {
+                        include: { user: { select: { name: true } } }
+                    }
+                } as any
+            }),
+            this.prisma.application.findMany({
+                take: 5,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    student: {
+                        include: { user: { select: { name: true } } }
+                    },
+                    role: {
+                        select: { name: true, project: { select: { title: true } } }
+                    }
+                } as any
+            })
+        ]);
 
         return {
             totalRevenue: totalRevenue._sum.amount || 0,
-            pendingProjects,
-            activeUsers,
-            activeProjects,
+            pendingProjects: pendingProjectsCount,
+            activeUsers: totalStudents + totalClients,
+            totalStudents,
+            totalClients,
+            activeProjects: activeProjectsCount,
+            recentProjects,
+            recentApplications
         };
     }
 
@@ -195,6 +236,85 @@ export class UsersService {
                 toUser: { select: { name: true } }
             },
             orderBy: { createdAt: 'desc' }
+        });
+    }
+    async getAdminProfile(userId: string) {
+        try {
+            let profile = await this.prisma.adminProfile.findUnique({
+                where: { userId },
+                include: {
+                    user: {
+                        include: {
+                            adminProjects: {
+                                where: {
+                                    status: { in: ['OPEN', 'IN_PROGRESS'] }
+                                },
+                            }
+                        }
+                    }
+                },
+            });
+
+            if (!profile) {
+                console.log(`Admin profile not found for user ${userId}, creating new one.`);
+                profile = await this.prisma.adminProfile.create({
+                    data: { userId },
+                    include: {
+                        user: {
+                            include: { adminProjects: true }
+                        }
+                    },
+                });
+            }
+            return profile;
+        } catch (error) {
+            console.error("Error in getAdminProfile:", error);
+            throw error;
+        }
+    }
+
+    async updateAdminProfile(userId: string, data: any) {
+        try {
+            console.log(`Updating admin profile for ${userId} with data:`, data);
+            return await this.prisma.adminProfile.upsert({
+                where: { userId },
+                update: data,
+                create: {
+                    userId,
+                    ...data,
+                },
+            });
+        } catch (error) {
+            console.error("Error in updateAdminProfile:", error);
+            throw error;
+        }
+    }
+
+    async getAllUsers() {
+        return this.prisma.user.findMany({
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                role: true,
+                createdAt: true,
+                studentProfile: { select: { id: true } },
+                clientProfile: { select: { id: true } },
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+
+    async updateUserRole(userId: string, role: any) {
+        return this.prisma.user.update({
+            where: { id: userId },
+            data: { role },
+        });
+    }
+
+    async deleteUser(userId: string) {
+        return this.prisma.user.delete({
+            where: { id: userId },
         });
     }
 }

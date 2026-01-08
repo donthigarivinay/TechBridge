@@ -12,6 +12,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { CommentsModule } from './comments/comments.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MessagesModule } from './messages/messages.module';
+import { GithubModule } from './github/github.module';
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -29,6 +30,7 @@ import { MessagesModule } from './messages/messages.module';
         CommentsModule,
         NotificationsModule,
         MessagesModule,
+        GithubModule,
     ],
     controllers: [],
     providers: [],

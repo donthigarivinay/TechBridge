@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/axios';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
-import { User, Shield, Bell, AppWindow, Building, Phone, Mail, FileText, Globe } from 'lucide-react';
+import { User, Shield, Bell, Building, Phone, FileText, Globe, Sparkles } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function ClientSettingsPage() {
     const [loading, setLoading] = useState(true);
@@ -74,15 +75,15 @@ export default function ClientSettingsPage() {
             });
 
             toast({
-                title: "Settings Saved",
-                description: "Your profile details have been updated.",
+                title: "Profile Updated",
+                description: "Your settings have been saved successfully.",
             });
         } catch (error: any) {
             console.error("Failed to save settings", error);
             toast({
                 variant: "destructive",
                 title: "Save Failed",
-                description: "Something went wrong while saving your changes.",
+                description: "Failed to save changes.",
             });
         } finally {
             setSaving(false);
@@ -91,194 +92,234 @@ export default function ClientSettingsPage() {
 
     if (loading) {
         return (
-            <div className="max-w-4xl mx-auto space-y-8 p-8">
-                <Skeleton className="h-64 w-full rounded-3xl" />
-                <Skeleton className="h-96 w-full rounded-3xl" />
+            <div className="space-y-12 p-8 bg-[#020202] min-h-screen">
+                <div className="flex justify-between items-center pb-8 border-b border-zinc-900/50">
+                    <div>
+                        <Skeleton className="h-10 w-64 bg-zinc-900 mb-2 rounded-xl" />
+                        <Skeleton className="h-4 w-48 bg-zinc-900/50 rounded-lg" />
+                    </div>
+                </div>
+                <div className="grid grid-cols-4 gap-12">
+                    <Skeleton className="col-span-1 h-64 bg-zinc-900/20 rounded-[40px]" />
+                    <Skeleton className="col-span-3 h-[800px] bg-zinc-900/20 rounded-[48px]" />
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="max-w-5xl mx-auto py-12 px-6 space-y-12 animate-in fade-in duration-700">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-12 p-8 bg-[#020202] min-h-screen text-white animate-in fade-in duration-700">
+            {/* Header section */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-8 border-b border-zinc-900/50">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tight text-white mb-2">Account Settings</h1>
-                    <p className="text-zinc-500 font-medium">Manage your company details and account preferences.</p>
+                    <div className="flex items-center gap-3 mb-2">
+                        <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-[10px] font-black rounded-full uppercase tracking-widest border border-blue-500/20">Account Settings</span>
+                        <span className="text-zinc-500 font-black text-[10px] uppercase tracking-widest">• Manage Profile</span>
+                    </div>
+                    <h1 className="text-4xl font-black tracking-tight italic bg-gradient-to-r from-white to-zinc-500 bg-clip-text text-transparent uppercase">
+                        Edit Settings
+                    </h1>
+                    <p className="text-zinc-500 font-medium mt-1 italic text-sm">Update your personal and business profile details.</p>
                 </div>
+
                 <Button
                     onClick={handleSave}
                     disabled={saving}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 h-12 rounded-2xl font-bold shadow-xl shadow-blue-500/20 transition-all hover:scale-105 active:scale-95"
+                    className="h-14 px-10 bg-white hover:bg-zinc-200 text-black border border-white rounded-2xl transition-all font-black text-[10px] uppercase tracking-widest shadow-2xl flex items-center gap-2 active:scale-95 disabled:opacity-30"
                 >
-                    {saving ? 'Saving...' : 'Save All Changes'}
+                    {saving ? 'Saving...' : 'Save Changes'} <Shield className="w-4 h-4 ml-2" />
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
                 {/* Secondary Sidebar */}
-                <div className="lg:col-span-1 space-y-2">
-                    {[
-                        { name: 'Profile Details', icon: User, active: true },
-                        { name: 'Notifications', icon: Bell, active: false },
-                        { name: 'Security', icon: Shield, active: false },
-                        { name: 'Billing', icon: FileText, active: false },
-                    ].map((item) => (
-                        <button
-                            key={item.name}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${item.active
-                                ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20'
-                                : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'
-                                }`}
-                        >
-                            <item.icon className="w-5 h-5" />
-                            {item.name}
-                        </button>
-                    ))}
+                <div className="lg:col-span-1 space-y-3">
+                    <div className="p-2 rounded-[32px] bg-zinc-900/10 border border-zinc-900/50 backdrop-blur-3xl">
+                        {[
+                            { name: 'Profile Details', icon: User, active: true },
+                            { name: 'Security', icon: Shield, active: false },
+                            { name: 'Notifications', icon: Bell, active: false },
+                            { name: 'Billing', icon: FileText, active: false },
+                        ].map((item) => (
+                            <button
+                                key={item.name}
+                                className={cn(
+                                    "w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all group italic",
+                                    item.active
+                                        ? "bg-blue-600/10 text-blue-400 border border-blue-600/20 shadow-lg"
+                                        : "text-zinc-600 hover:text-white hover:bg-zinc-900 border border-transparent"
+                                )}
+                            >
+                                <item.icon className={cn("w-4 h-4", item.active ? "text-blue-400" : "text-zinc-700 group-hover:text-blue-500")} />
+                                {item.name}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="p-8 rounded-[32px] bg-blue-600/5 border border-blue-600/10 backdrop-blur-3xl mt-8">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Sparkles className="w-3 h-3 text-blue-500" />
+                            <span className="text-[8px] font-black text-blue-500 uppercase tracking-widest">Premium Status</span>
+                        </div>
+                        <p className="text-[10px] font-black text-white uppercase tracking-widest italic mb-2">Active Member</p>
+                        <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic leading-loose">Verified business account with full access to project management.</p>
+                    </div>
                 </div>
 
                 {/* Main Content */}
-                <div className="lg:col-span-3 space-y-8">
-
+                <div className="lg:col-span-3 space-y-12 pb-20">
                     {/* Basic Info */}
-                    <Card className="bg-zinc-900/50 border-zinc-800/50 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
-                        <CardHeader className="bg-zinc-800/20 p-8 border-b border-zinc-800/50">
-                            <CardTitle className="text-xl font-bold text-white">Basic Information</CardTitle>
-                            <CardDescription className="text-zinc-500">Your personal account details.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-8 space-y-6">
-                            <div className="space-y-2">
-                                <Label className="text-sm font-bold text-zinc-400 ml-1">Full Name</Label>
-                                <Input
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="bg-zinc-950 border-zinc-800 rounded-2xl h-14 px-6 text-white focus:ring-4 focus:ring-blue-500/10 transition-all text-lg"
-                                />
+                    <Card className="bg-zinc-900/10 border-zinc-800/50 rounded-[48px] overflow-hidden backdrop-blur-3xl shadow-2xl relative group">
+                        <div className="p-10 border-b border-zinc-900/50 bg-zinc-950/20">
+                            <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 rounded-2xl bg-zinc-950 border border-zinc-900 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                                    <User className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-black italic uppercase tracking-tight text-white mb-1">Personal Information</h2>
+                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic font-mono">ID: {email.split('@')[0].toUpperCase()}</p>
+                                </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-sm font-bold text-zinc-400 ml-1">Email Address</Label>
-                                <Input
-                                    value={email}
-                                    disabled
-                                    className="bg-zinc-950/50 border-zinc-800 rounded-2xl h-14 px-6 text-zinc-500 cursor-not-allowed"
-                                />
+                        </div>
+                        <CardContent className="p-10 space-y-10 relative z-10">
+                            <div className="grid gap-10 md:grid-cols-2">
+                                <div className="space-y-3">
+                                    <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic ml-1">Contact Person</Label>
+                                    <Input
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        className="h-16 px-8 bg-zinc-950/50 border-zinc-900 rounded-2xl text-[12px] font-black uppercase tracking-widest text-white placeholder:text-zinc-800 focus:ring-blue-500/20 shadow-inner"
+                                    />
+                                </div>
+                                <div className="space-y-3">
+                                    <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic ml-1">Email Address</Label>
+                                    <Input
+                                        value={email}
+                                        disabled
+                                        className="h-16 px-8 bg-zinc-900/20 border-zinc-900/50 rounded-2xl text-[12px] font-black uppercase tracking-widest text-zinc-700 cursor-not-allowed italic"
+                                    />
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Company Details */}
-                    <Card className="bg-zinc-900/50 border-zinc-800/50 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
-                        <CardHeader className="bg-zinc-800/20 p-8 border-b border-zinc-800/50">
-                            <div className="flex items-center gap-3">
-                                <Building className="w-6 h-6 text-blue-500" />
+                    <Card className="bg-zinc-900/10 border-zinc-800/50 rounded-[48px] overflow-hidden backdrop-blur-3xl shadow-2xl relative group">
+                        <div className="p-10 border-b border-zinc-900/50 bg-zinc-950/20">
+                            <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 rounded-2xl bg-zinc-950 border border-zinc-900 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
+                                    <Building className="w-6 h-6" />
+                                </div>
                                 <div>
-                                    <CardTitle className="text-xl font-bold text-white">Company Details</CardTitle>
-                                    <CardDescription className="text-zinc-500">Tell us about your organization.</CardDescription>
+                                    <h2 className="text-xl font-black italic uppercase tracking-tight text-white mb-1">Business Profile</h2>
+                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic">Company details and industry information.</p>
                                 </div>
                             </div>
-                        </CardHeader>
-                        <CardContent className="p-8 space-y-6">
-                            <div className="grid gap-6 md:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-bold text-zinc-400 ml-1">Company Name</Label>
+                        </div>
+                        <CardContent className="p-10 space-y-10 relative z-10">
+                            <div className="grid gap-10 md:grid-cols-2">
+                                <div className="space-y-3">
+                                    <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic ml-1">Company Name</Label>
                                     <Input
                                         value={companyName}
                                         onChange={(e) => setCompanyName(e.target.value)}
-                                        placeholder="Acme Corp"
-                                        className="bg-zinc-950 border-zinc-800 rounded-2xl h-14 px-6 text-white focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                        placeholder="E.G. ACME CORP"
+                                        className="h-16 px-8 bg-zinc-950/50 border-zinc-900 rounded-2xl text-[12px] font-black uppercase tracking-widest text-white placeholder:text-zinc-800 focus:ring-blue-500/20 shadow-inner"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-bold text-zinc-400 ml-1">Website</Label>
+                                <div className="space-y-3">
+                                    <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic ml-1">Company Website</Label>
                                     <div className="relative">
-                                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
+                                        <Globe className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-700" />
                                         <Input
                                             value={website}
                                             onChange={(e) => setWebsite(e.target.value)}
-                                            placeholder="https://acme.com"
-                                            className="pl-12 bg-zinc-950 border-zinc-800 rounded-2xl h-14 px-6 text-white focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                            placeholder="HTTPS://ENTITY.COM"
+                                            className="h-16 pl-14 pr-8 bg-zinc-950/50 border-zinc-900 rounded-2xl text-[12px] font-black uppercase tracking-widest text-white placeholder:text-zinc-800 focus:ring-blue-500/20 shadow-inner"
                                         />
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-bold text-zinc-400 ml-1">Industry</Label>
+                                <div className="space-y-3">
+                                    <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic ml-1">Industry</Label>
                                     <Input
                                         value={industry}
                                         onChange={(e) => setIndustry(e.target.value)}
-                                        placeholder="e.g. Fintech"
-                                        className="bg-zinc-950 border-zinc-800 rounded-2xl h-14 px-6 text-white focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                        placeholder="E.G. DEEP TECH"
+                                        className="h-16 px-8 bg-zinc-950/50 border-zinc-900 rounded-2xl text-[12px] font-black uppercase tracking-widest text-white placeholder:text-zinc-800 focus:ring-blue-500/20 shadow-inner"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-bold text-zinc-400 ml-1">Company Size</Label>
+                                <div className="space-y-3">
+                                    <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic ml-1">Company Size</Label>
                                     <select
                                         value={companySize}
                                         onChange={(e) => setCompanySize(e.target.value)}
-                                        className="w-full bg-zinc-950 border-zinc-800 rounded-2xl h-14 px-6 text-white focus:ring-4 focus:ring-blue-500/10 transition-all appearance-none cursor-pointer"
+                                        className="w-full h-16 px-8 bg-zinc-950/50 border border-zinc-900 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-inner appearance-none transition-all cursor-pointer hover:bg-zinc-900/50"
                                     >
-                                        <option value="">Select size</option>
-                                        <option value="1-10">1-10 employees</option>
-                                        <option value="11-50">11-50 employees</option>
-                                        <option value="51-200">51-200 employees</option>
-                                        <option value="200+">200+ employees</option>
+                                        <option value="" className="bg-[#020202]">Select Size</option>
+                                        <option value="1-10" className="bg-[#020202]">1-10 Employees</option>
+                                        <option value="11-50" className="bg-[#020202]">11-50 Employees</option>
+                                        <option value="51-200" className="bg-[#020202]">51-200 Employees</option>
+                                        <option value="200+" className="bg-[#020202]">200+ Employees</option>
                                     </select>
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-sm font-bold text-zinc-400 ml-1">About Company</Label>
+                            <div className="space-y-3">
+                                <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic ml-1">Company Bio</Label>
                                 <textarea
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-3xl p-6 text-white focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all font-medium min-h-[120px] resize-none leading-relaxed"
-                                    placeholder="Brief description of what your company does..."
+                                    className="w-full h-40 p-8 bg-zinc-950/50 border border-zinc-900 rounded-[32px] text-[12px] font-black uppercase tracking-widest text-zinc-300 placeholder:text-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-inner leading-relaxed resize-none italic"
+                                    placeholder="Tell us about your company and mission..."
                                 />
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Contact Info */}
-                    <Card className="bg-zinc-900/50 border-zinc-800/50 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
-                        <CardHeader className="bg-zinc-800/20 p-8 border-b border-zinc-800/50">
-                            <div className="flex items-center gap-3">
-                                <Phone className="w-6 h-6 text-blue-500" />
+                    <Card className="bg-zinc-900/10 border-zinc-800/50 rounded-[48px] overflow-hidden backdrop-blur-3xl shadow-2xl relative group mb-20">
+                        <div className="p-10 border-b border-zinc-900/50 bg-zinc-950/20">
+                            <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 rounded-2xl bg-zinc-950 border border-zinc-900 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+                                    <Phone className="w-6 h-6" />
+                                </div>
                                 <div>
-                                    <CardTitle className="text-xl font-bold text-white">Contact Information</CardTitle>
-                                    <CardDescription className="text-zinc-500">How can candidates reach you?</CardDescription>
+                                    <h2 className="text-xl font-black italic uppercase tracking-tight text-white mb-1">Contact Information</h2>
+                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic">Provide your contact details for students to reach you.</p>
                                 </div>
                             </div>
-                        </CardHeader>
-                        <CardContent className="p-8 space-y-6">
-                            <div className="grid gap-6 md:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-bold text-zinc-400 ml-1">Phone Number</Label>
+                        </div>
+                        <CardContent className="p-10 space-y-10 relative z-10">
+                            <div className="grid gap-10 md:grid-cols-2">
+                                <div className="space-y-3">
+                                    <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic ml-1">Phone Number</Label>
                                     <Input
                                         value={contactPhone}
                                         onChange={(e) => setContactPhone(e.target.value)}
                                         placeholder="+1 (555) 000-0000"
-                                        className="bg-zinc-950 border-zinc-800 rounded-2xl h-14 px-6 text-white focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                        className="h-16 px-8 bg-zinc-950/50 border-zinc-900 rounded-2xl text-[12px] font-black uppercase tracking-widest text-white placeholder:text-zinc-800 focus:ring-blue-500/20 shadow-inner"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-bold text-zinc-400 ml-1">LinkedIn URL</Label>
+                                <div className="space-y-3">
+                                    <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic ml-1">LinkedIn Profile</Label>
                                     <Input
                                         value={linkedin}
                                         onChange={(e) => setLinkedin(e.target.value)}
-                                        placeholder="https://linkedin.com/in/company"
-                                        className="bg-zinc-950 border-zinc-800 rounded-2xl h-14 px-6 text-white focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                        placeholder="HTTPS://LINKEDIN.COM/IN/ENTITY"
+                                        className="h-16 px-8 bg-zinc-950/50 border-zinc-900 rounded-2xl text-[12px] font-black uppercase tracking-widest text-white placeholder:text-zinc-800 focus:ring-blue-500/20 shadow-inner"
                                     />
                                 </div>
-                                <div className="space-y-2 md:col-span-2">
-                                    <Label className="text-sm font-bold text-zinc-400 ml-1">Location (HQ)</Label>
+                                <div className="space-y-3 md:col-span-2">
+                                    <Label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] italic ml-1">Headquarters</Label>
                                     <Input
                                         value={location}
                                         onChange={(e) => setLocation(e.target.value)}
-                                        placeholder="City, Country"
-                                        className="bg-zinc-950 border-zinc-800 rounded-2xl h-14 px-6 text-white focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                        placeholder="CITY, COUNTRY"
+                                        className="h-16 px-8 bg-zinc-950/50 border-zinc-900 rounded-2xl text-[12px] font-black uppercase tracking-widest text-white placeholder:text-zinc-800 focus:ring-blue-500/20 shadow-inner"
                                     />
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
-
                 </div>
             </div>
         </div>
