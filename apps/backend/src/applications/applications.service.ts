@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ApplicationStatus } from '@btech/types';
+import { ApplicationStatus, ProjectStatus } from '@btech/types';
 import { GithubService } from '../github/github.service';
 
 @Injectable()
@@ -26,10 +26,10 @@ export class ApplicationsService {
         const activeProject = await this.prisma.application.findFirst({
             where: {
                 studentId,
-                status: 'ACCEPTED',
+                status: ApplicationStatus.ACCEPTED,
                 role: {
                     project: {
-                        status: { notIn: ['COMPLETED', 'CANCELLED'] }
+                        status: { notIn: [ProjectStatus.COMPLETED, ProjectStatus.CANCELLED] }
                     }
                 }
             },
@@ -44,7 +44,7 @@ export class ApplicationsService {
 
         // Check if role is already filled
         const filledRole = await this.prisma.application.findFirst({
-            where: { roleId, status: 'ACCEPTED' },
+            where: { roleId, status: ApplicationStatus.ACCEPTED },
         });
 
         if (filledRole) {
@@ -78,7 +78,7 @@ export class ApplicationsService {
         });
     }
 
-    async getAllApplications(status?: string) {
+    async getAllApplications(status?: ApplicationStatus) {
         return this.prisma.application.findMany({
             where: status ? { status } : {},
             include: {
@@ -99,7 +99,7 @@ export class ApplicationsService {
         });
     }
 
-    async updateApplicationStatus(id: string, status: string) {
+    async updateApplicationStatus(id: string, status: ApplicationStatus) {
         const application = await this.prisma.application.findUnique({
             where: { id },
             include: {
@@ -121,7 +121,7 @@ export class ApplicationsService {
             data: { status },
         });
 
-        if (status === 'ACCEPTED') {
+        if (status === ApplicationStatus.ACCEPTED) {
             const projectId = application.role.projectId;
             const project = application.role.project;
 

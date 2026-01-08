@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { Prisma } from '@prisma/client';
+import { UserRole } from '@btech/types';
 
 @Injectable()
 export class AuthService {
@@ -51,15 +52,15 @@ export class AuthService {
                         name: data.name,
                         email: data.email,
                         password: hashedPassword,
-                        role: data.role || 'STUDENT',
+                        role: data.role || UserRole.STUDENT,
                     },
                 });
 
-                if (newUser.role === 'STUDENT') {
+                if (newUser.role === UserRole.STUDENT) {
                     await prisma.studentProfile.create({ data: { userId: newUser.id } });
-                } else if (newUser.role === 'CLIENT') {
+                } else if (newUser.role === UserRole.CLIENT) {
                     await prisma.clientProfile.create({ data: { userId: newUser.id } });
-                } else if (newUser.role === 'ADMIN') {
+                } else if (newUser.role === UserRole.ADMIN) {
                     await prisma.adminProfile.create({ data: { userId: newUser.id } });
                 }
 

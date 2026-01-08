@@ -42,6 +42,23 @@ enum PaymentStatus {
   FAILED
 }
 
+enum ProjectRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum StudentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentType {
+  PROJECT_BUDGET
+  SALARY_DISTRIBUTION
+}
+
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
@@ -128,7 +145,7 @@ model StudentProfile {
   applications Application[]
   teamMembers  TeamMember[]
   earnings     Float         @default(0.0)
-  status       String        @default("PENDING") // PENDING, APPROVED, REJECTED
+  status       StudentStatus @default(PENDING)
 }
 
 model Skill {
@@ -145,7 +162,7 @@ model ProjectRequest {
   title       String
   description String
   budget      Float?
-  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  status      ProjectRequestStatus @default(PENDING)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -284,7 +301,7 @@ model Payment {
   toUserId    String?
   toUser      User?    @relation("Receiver", fields: [toUserId], references: [id])
   
-  type        String   // PROJECT_BUDGET, SALARY_DISTRIBUTION
+  type        PaymentType
   createdAt   DateTime @default(now())
 }
 

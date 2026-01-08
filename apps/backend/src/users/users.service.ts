@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserRole, StudentStatus, ProjectStatus, PaymentStatus } from '@btech/types';
 
 @Injectable()
 export class UsersService {
@@ -135,14 +136,14 @@ export class UsersService {
         });
     }
 
-    async getAllStudents(status?: string) {
+    async getAllStudents(status?: StudentStatus) {
         return this.prisma.studentProfile.findMany({
             where: (status ? { status } : {}) as any,
             include: { user: { select: { id: true, name: true, email: true } }, skills: true },
         });
     }
 
-    async updateStudentStatus(id: string, status: string) {
+    async updateStudentStatus(id: string, status: StudentStatus) {
         return this.prisma.studentProfile.update({
             where: { id },
             data: { status } as any,
@@ -160,16 +161,16 @@ export class UsersService {
             recentApplications
         ] = await Promise.all([
             this.prisma.payment.aggregate({
-                where: { status: 'COMPLETED' },
+                where: { status: PaymentStatus.COMPLETED },
                 _sum: { amount: true },
             }),
             this.prisma.project.count({
-                where: { status: 'PENDING_APPROVAL' },
+                where: { status: ProjectStatus.PENDING },
             }),
             this.prisma.studentProfile.count(),
             this.prisma.clientProfile.count(),
             this.prisma.project.count({
-                where: { status: 'IN_PROGRESS' },
+                where: { status: ProjectStatus.IN_PROGRESS },
             }),
             this.prisma.project.findMany({
                 take: 5,
@@ -247,7 +248,7 @@ export class UsersService {
                         include: {
                             adminProjects: {
                                 where: {
-                                    status: { in: ['OPEN', 'IN_PROGRESS'] }
+                                    status: { in: [ProjectStatus.OPEN, ProjectStatus.IN_PROGRESS] }
                                 },
                             }
                         }
@@ -305,7 +306,7 @@ export class UsersService {
         });
     }
 
-    async updateUserRole(userId: string, role: any) {
+    async updateUserRole(userId: string, role: UserRole) {
         return this.prisma.user.update({
             where: { id: userId },
             data: { role },

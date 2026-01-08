@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserRole } from '@btech/types';
 
 @Injectable()
 export class MessagesService {
@@ -103,7 +104,7 @@ export class MessagesService {
 
         // Enforcement: Only Admin can talk to anyone.
         // Others can only talk to Admin.
-        if (sender.role !== 'ADMIN' && receiver.role !== 'ADMIN') {
+        if (sender.role !== UserRole.ADMIN && receiver.role !== UserRole.ADMIN) {
             throw new Error('Communication protocol violation: Non-admin users can only initiate contact with administrators.');
         }
 
@@ -138,7 +139,7 @@ export class MessagesService {
         // Find an admin user. For simplicity, picking the first admin.
         // In real app, might have a specific support user or round-robin.
         const admin = await this.prisma.user.findFirst({
-            where: { role: 'ADMIN' },
+            where: { role: UserRole.ADMIN },
         });
 
         if (!admin) throw new Error('No support admin available');

@@ -4,7 +4,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
-import { UserRole } from '@btech/types';
+import { UserRole, StudentStatus } from '@btech/types';
 
 @ApiTags('students')
 @ApiBearerAuth()
@@ -53,13 +53,13 @@ export class StudentsController {
     @Roles(UserRole.ADMIN)
     @ApiOperation({ summary: 'Get pending students (Admin)' })
     async getPendingStudents() {
-        return this.usersService.getAllStudents('PENDING');
+        return this.usersService.getAllStudents(StudentStatus.PENDING);
     }
 
     @Patch(':id/status')
     @Roles(UserRole.ADMIN)
     @ApiOperation({ summary: 'Update student verification status (Admin)' })
-    async updateStatus(@Param('id') id: string, @Body('status') status: string) {
+    async updateStatus(@Param('id') id: string, @Body('status') status: StudentStatus) {
         return this.usersService.updateStudentStatus(id, status);
     }
 }

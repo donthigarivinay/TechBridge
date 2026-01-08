@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ProjectStatus } from '@btech/types';
+import { ProjectStatus, ApplicationStatus, ProjectRequestStatus } from '@btech/types';
 import { GithubService } from '../github/github.service';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class ProjectsService {
             data: {
                 ...data,
                 clientId,
-                status: 'PENDING',
+                status: ProjectRequestStatus.PENDING,
             },
         });
     }
@@ -25,7 +25,7 @@ export class ProjectsService {
             data: {
                 ...data,
                 clientId,
-                status: 'PENDING_APPROVAL',
+                status: ProjectStatus.PENDING,
             },
         });
     }
@@ -35,7 +35,7 @@ export class ProjectsService {
             data: {
                 ...data,
                 adminId,
-                status: 'OPEN',
+                status: ProjectStatus.OPEN,
             },
         });
     }
@@ -44,7 +44,7 @@ export class ProjectsService {
         const project = await this.prisma.project.update({
             where: { id },
             data: {
-                status: 'OPEN',
+                status: ProjectStatus.OPEN,
                 adminId: adminId
             },
         });
@@ -64,7 +64,7 @@ export class ProjectsService {
         return this.prisma.project.update({
             where: { id },
             data: {
-                status: 'REJECTED',
+                status: ProjectStatus.CANCELLED,
                 adminId: adminId
             },
         });
@@ -72,12 +72,12 @@ export class ProjectsService {
 
     async getOpportunities() {
         return this.prisma.project.findMany({
-            where: { status: 'OPEN' },
+            where: { status: ProjectStatus.OPEN },
             include: {
                 roles: {
                     include: {
                         applications: {
-                            where: { status: 'ACCEPTED' },
+                            where: { status: ApplicationStatus.ACCEPTED },
                             select: { id: true, status: true }
                         }
                     }
@@ -105,7 +105,7 @@ export class ProjectsService {
                 roles: {
                     include: {
                         applications: {
-                            where: { status: 'ACCEPTED' },
+                            where: { status: ApplicationStatus.ACCEPTED },
                             select: { id: true, status: true }
                         }
                     }
@@ -157,7 +157,7 @@ export class ProjectsService {
         });
     }
 
-    async updateProjectStatus(id: string, status: string) {
+    async updateProjectStatus(id: string, status: ProjectStatus) {
         return this.prisma.project.update({
             where: { id },
             data: { status },

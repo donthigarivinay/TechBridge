@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { ProjectStatus, PaymentStatus, PaymentType } from '@btech/types';
 
 @Injectable()
 export class PaymentsService {
@@ -15,8 +16,8 @@ export class PaymentsService {
                 amount,
                 projectId,
                 fromUserId: userId,
-                type: 'PROJECT_BUDGET',
-                status: 'COMPLETED', // Simulating instant success
+                type: PaymentType.PROJECT_BUDGET,
+                status: PaymentStatus.COMPLETED, // Simulating instant success
             },
         });
 
@@ -24,7 +25,7 @@ export class PaymentsService {
         return this.prisma.project.update({
             where: { id: projectId },
             data: {
-                status: 'OPEN', // Mark as open for team formation after payment
+                status: ProjectStatus.OPEN, // Mark as open for team formation after payment
             },
         });
     }
@@ -62,8 +63,8 @@ export class PaymentsService {
                         amount: salary,
                         projectId: projectId,
                         toUserId: role.teamMember.student.userId,
-                        type: 'SALARY_DISTRIBUTION',
-                        status: 'PENDING',
+                        type: PaymentType.SALARY_DISTRIBUTION,
+                        status: PaymentStatus.PENDING,
                     }
                 });
 
@@ -85,7 +86,7 @@ export class PaymentsService {
         return this.prisma.payment.update({
             where: { id: paymentId },
             data: {
-                status: 'COMPLETED',
+                status: PaymentStatus.COMPLETED,
                 referenceId: referenceId
             }
         });
@@ -95,7 +96,7 @@ export class PaymentsService {
         return this.prisma.payment.findMany({
             where: {
                 projectId,
-                type: 'SALARY_DISTRIBUTION'
+                type: PaymentType.SALARY_DISTRIBUTION
             },
             include: {
                 toUser: {
