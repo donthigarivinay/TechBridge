@@ -14,7 +14,7 @@ async function bootstrap() {
             'https://tech-bridge-frontend.vercel.app',
             'http://localhost:3000',
             'http://127.0.0.1:3000'
-        ].filter(Boolean),
+        ].filter((origin): origin is string => !!origin),
         credentials: true,
     });
 
