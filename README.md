@@ -66,7 +66,7 @@ Whether you are a student looking for hands-on experience or a business seeking 
 📄 package.json
 📄 package-lock.json
 📄 .gitignore
-
+```
 
 ### Folder Details
 
@@ -90,7 +90,7 @@ cd TechBridge
 npm install
 3️⃣ Start the Development Server
 npm run dev
-
+```
 ⚠️ You may need to configure environment variables (API keys, database URLs, etc.).
 Create a .env file and add the required values.
 
