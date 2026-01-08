@@ -32,15 +32,6 @@ export function Navbar() {
                 <div className="flex items-center gap-4">
                     {user ? (
                         <>
-                            <Link href={
-                                user.role === 'STUDENT' ? '/dashboard/student' :
-                                    user.role === 'CLIENT' ? '/dashboard/client' :
-                                        '/dashboard/admin'
-                            }>
-                                <Button className="bg-gradient-to-r from-cyan-400 to-violet-500 text-white border-0 hover:shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all font-bold rounded-full">
-                                    Dashboard
-                                </Button>
-                            </Link>
                             <div className="flex items-center gap-3 pl-4 border-l border-white/10">
                                 <div className="w-8 h-8 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-[10px] font-bold text-cyan-400">
                                     {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user.email[0].toUpperCase()}
